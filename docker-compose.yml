@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: back-iso
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:R.vg#htM*V6C@x!@db.pqlvvbggwennzfcqxvdo.supabase.co:5432/postgres
+    volumes:
+      - uploads:/app/uploads
+
+volumes:
+  uploads:
