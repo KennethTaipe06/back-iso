@@ -60,7 +60,6 @@ jobs:
           docker run -d \
             --name ${{ env.CONTAINER_NAME }} \
             --restart unless-stopped \
-            --network back-iso_default \
             -p 8000:8000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -v uploads:/app/uploads \
