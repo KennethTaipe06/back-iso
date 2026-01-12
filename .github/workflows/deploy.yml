@@ -66,5 +66,6 @@ jobs:
             -v uploads:/app/uploads \
             ${{ env.IMAGE_NAME }}:latest
       
+            
       - name: Verify deployment
         run: docker ps --filter "name=${{ env.CONTAINER_NAME }}"
