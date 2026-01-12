@@ -1,6 +1,27 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-iso
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: iso_centro
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - postgres_network
+
   backend:
     build: .
     container_name: back-iso
@@ -8,9 +29,19 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://postgres:R.vg#htM*V6C@x!@db.pqlvvbggwennzfcqxvdo.supabase.co:5432/postgres
+      DATABASE_URL: postgresql://postgres:password123@db:5432/iso_centro
     volumes:
       - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - postgres_network
 
 volumes:
+  postgres_data:
   uploads:
+
+networks:
+  postgres_network:
+    driver: bridge
