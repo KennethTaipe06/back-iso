@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from .database import get_db
-from .models import Usuario
+from .models import Usuario, Rol
 from .schemas import UsuarioCreate, Token, UsuarioOut
 from .security import verify_password, get_password_hash, create_access_token
 
@@ -15,7 +15,12 @@ def registrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     if user_exist:
         raise HTTPException(status_code=400, detail="Email ya registrado")
     
-    # 2. Crear usuario
+    # 2. Verificar que el rol existe
+    rol_existe = db.query(Rol).filter(Rol.id_rol == usuario.id_rol).first()
+    if not rol_existe:
+        raise HTTPException(status_code=400, detail=f"El rol con ID {usuario.id_rol} no existe. Usa: 1=Administrador, 2=Usuario, 3=Auditor")
+    
+    # 3. Crear usuario
     hashed_pw = get_password_hash(usuario.password)
     nuevo_usuario = Usuario(
         email=usuario.email,
@@ -28,7 +33,7 @@ def registrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(nuevo_usuario)
     
-    # 3. Retornar Token directo
+    # 4. Retornar Token directo
     access_token = create_access_token(data={"sub": nuevo_usuario.email})
     return {"access_token": access_token, "token_type": "bearer"}
 

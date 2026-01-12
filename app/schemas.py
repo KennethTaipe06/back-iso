@@ -13,7 +13,7 @@ class UsuarioBase(BaseModel):
 class UsuarioCreate(UsuarioBase):
     nombre_completo: str
     password: str
-    id_rol: int # Asegúrate de crear roles primero en la BD
+    id_rol: int = 2  # Por defecto: Usuario (1=Administrador, 2=Usuario, 3=Auditor)
 
 class UsuarioOut(UsuarioBase):
     id_usuario: int
