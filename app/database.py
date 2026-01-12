@@ -5,7 +5,7 @@ import os
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:C3UDGlfJ2zM5V9@db.qabyzqvfxdwxyqhmkarv.supabase.co:5432/postgres"
+    "postgresql://postgres:R.vg#htM*V6C@x!@db.pqlvvbggwennzfcqxvdo.supabase.co:5432/postgres"
 )
 
 engine = create_engine(DATABASE_URL)
