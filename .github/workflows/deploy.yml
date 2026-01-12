@@ -52,6 +52,7 @@ jobs:
           docker rm ${{ env.CONTAINER_NAME }} || true
         continue-on-error: true
       
+        
       - name: Pull latest image
         run: docker pull ${{ env.IMAGE_NAME }}:latest
       
