@@ -56,20 +56,19 @@ jobs:
       - name: Pull latest image
         run: docker pull ${{ env.IMAGE_NAME }}:latest
       
-      - name: Get PostgreSQL container IP
-        id: postgres_ip
+      - name: Ensure network exists and connect postgres
         run: |
-          POSTGRES_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres-iso)
-          echo "ip=$POSTGRES_IP" >> $GITHUB_OUTPUT
-          echo "PostgreSQL IP: $POSTGRES_IP"
+          docker network create back-iso-network || true
+          docker network connect back-iso-network postgres-iso || true
       
       - name: Run new container
         run: |
           docker run -d \
             --name ${{ env.CONTAINER_NAME }} \
             --restart unless-stopped \
+            --network back-iso-network \
             -p 8000:8000 \
-            -e DATABASE_URL="postgresql://postgres:password123@${{ steps.postgres_ip.outputs.ip }}:5432/iso_centro" \
+            -e DATABASE_URL="postgresql://postgres:password123@postgres-iso:5432/iso_centro" \
             -v uploads:/app/uploads \
             ${{ env.IMAGE_NAME }}:latest
       
