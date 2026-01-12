@@ -14,5 +14,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    build: .
+    container_name: back-iso
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@172.17.0.1:5432/mi_base_de_datos
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
+  uploads:
