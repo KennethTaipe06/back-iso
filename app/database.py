@@ -9,7 +9,13 @@ DATABASE_URL = os.getenv(
     "postgresql://postgres:R.vg%23htM%2AV6C%40x%21@db.pqlvvbggwennzfcqxvdo.supabase.co:5432/postgres"
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={
+        "options": "-c timezone=utc"
+    },
+    pool_pre_ping=True
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
