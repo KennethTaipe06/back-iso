@@ -22,25 +22,8 @@ services:
     networks:
       - postgres_network
 
-  backend:
-    build: .
-    container_name: back-iso
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://postgres:password123@db:5432/iso_centro
-    volumes:
-      - uploads:/app/uploads
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - postgres_network
-
 volumes:
   postgres_data:
-  uploads:
 
 networks:
   postgres_network:
