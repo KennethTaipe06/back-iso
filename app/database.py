@@ -3,10 +3,11 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
+# Usar Connection Pooler de Supabase (puerto 6543) con modo session
 # Contraseña URL-encoded: R.vg#htM*V6C@x! → R.vg%23htM%2AV6C%40x%21
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:R.vg%23htM%2AV6C%40x%21@db.pqlvvbggwennzfcqxvdo.supabase.co:5432/postgres"
+    "postgresql://postgres:R.vg%23htM%2AV6C%40x%21@db.pqlvvbggwennzfcqxvdo.supabase.co:6543/postgres"
 )
 
 engine = create_engine(
