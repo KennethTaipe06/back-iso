@@ -20,11 +20,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - postgres_network
+      - back-iso-network
 
 volumes:
   postgres_data:
 
 networks:
-  postgres_network:
+  back-iso-network:
     driver: bridge
