@@ -40,11 +40,36 @@ jobs:
     runs-on: self-hosted
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      
+      - name: Initialize database
+        run: |
+          docker exec postgres-iso psql -U postgres -d iso_centro -f - <<'EOF'
+          -- Crear tabla de roles si no existe
+          CREATE TABLE IF NOT EXISTS roles (
+              id_rol SERIAL PRIMARY KEY,
+              nombre_rol VARCHAR(50) UNIQUE NOT NULL,
+              descripcion TEXT
+          );
+
+          -- Insertar roles por defecto con IDs específicos
+          INSERT INTO roles (id_rol, nombre_rol, descripcion) VALUES
+              (1, 'Administrador', 'Acceso total al sistema'),
+              (2, 'Usuario', 'Usuario estándar con acceso limitado'),
+              (3, 'Auditor', 'Solo lectura para auditoría')
+          ON CONFLICT (id_rol) DO NOTHING;
+
+          -- Actualizar la secuencia del ID para que el próximo sea 4
+          SELECT setval('roles_id_rol_seq', 3, true);
+          EOF
+        continue-on-error: true
       
       - name: Stop and remove old container
         run: |
@@ -76,4 +101,3 @@ jobs:
       - name: Verify deployment
         run: docker ps --filter "name=${{ env.CONTAINER_NAME }}"
 
-        

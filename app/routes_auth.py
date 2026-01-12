@@ -8,6 +8,12 @@ from .security import verify_password, get_password_hash, create_access_token
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
+@router.get("/roles")
+def listar_roles(db: Session = Depends(get_db)):
+    """Obtiene la lista de roles disponibles en el sistema"""
+    roles = db.query(Rol).all()
+    return [{"id_rol": r.id_rol, "nombre_rol": r.nombre_rol, "descripcion": r.descripcion} for r in roles]
+
 @router.post("/registro", response_model=Token)
 def registrar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     # 1. Verificar si existe
