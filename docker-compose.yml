@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: mi_postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mi_base_de_datos
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
   backend:
     build: .
     container_name: back-iso
@@ -21,12 +8,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://postgres:password@172.17.0.1:5432/mi_base_de_datos
+      DATABASE_URL: postgresql://postgres:C3UDGlfJ2zM5V9@db.qabyzqvfxdwxyqhmkarv.supabase.co:5432/postgres
     volumes:
       - uploads:/app/uploads
-    depends_on:
-      - db
 
 volumes:
-  postgres_data:
   uploads:
