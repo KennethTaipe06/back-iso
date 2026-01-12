@@ -56,16 +56,23 @@ jobs:
       - name: Pull latest image
         run: docker pull ${{ env.IMAGE_NAME }}:latest
       
+      - name: Get PostgreSQL container IP
+        id: postgres_ip
+        run: |
+          POSTGRES_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres-iso)
+          echo "ip=$POSTGRES_IP" >> $GITHUB_OUTPUT
+          echo "PostgreSQL IP: $POSTGRES_IP"
+      
       - name: Run new container
         run: |
           docker run -d \
             --name ${{ env.CONTAINER_NAME }} \
             --restart unless-stopped \
             -p 8000:8000 \
-            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            -e DATABASE_URL="postgresql://postgres:password123@${{ steps.postgres_ip.outputs.ip }}:5432/iso_centro" \
             -v uploads:/app/uploads \
             ${{ env.IMAGE_NAME }}:latest
       
-            
+
       - name: Verify deployment
         run: docker ps --filter "name=${{ env.CONTAINER_NAME }}"
